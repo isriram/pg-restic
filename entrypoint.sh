@@ -11,6 +11,8 @@ set -euo pipefail
 # and per-host retention grouping consistent
 export RESTIC_HOST="${RESTIC_HOST:-pg-restic}"
 
+echo "$(pg_dumpall --version), $(restic version)"
+
 # crond does not pass the container environment to jobs, so snapshot it to a file backup.sh can source
 export -p > /etc/pg-restic.env
 chmod 600 /etc/pg-restic.env
