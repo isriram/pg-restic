@@ -79,7 +79,8 @@ docker logs -f pg-restic
 
 | Variable                | Required | Default     | Description                                                                                                |
 | ----------------------- | -------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
-| `PGHOST`                | Yes      |             | Postgres host name                                                                                         |
+| `PGHOST`                | Yes      |             | Postgres host name (not `localhost`, see [Postgres outside Docker](#postgres-outside-docker))              |
+| `PGPORT`                | No       | `5432`      | Postgres port                                                                                              |
 | `PGUSER`                | Yes      |             | Postgres user (see [Postgres permissions](#postgres-permissions))                                          |
 | `PGPASSWORD`            | Yes      |             | Postgres password                                                                                          |
 | `RESTIC_REPOSITORY`     | Yes      |             | Restic repository, e.g. `s3:s3.amazonaws.com/bucket`                                                       |
@@ -115,6 +116,26 @@ The dump is made with `pg_dumpall --clean`, so it drops and recreates databases 
 **Test a restore before you rely on these backups.**
 
 ## Good to know
+
+### Postgres outside Docker
+
+`PGHOST=localhost` won't work: inside the container, `localhost` is the container itself. Use one of these instead.
+
+**On the same machine (recommended):** set `PGHOST=host.docker.internal`. This works as is on Docker Desktop (Windows/Mac). On Linux, also add this to the service in `compose.yaml`:
+
+```yaml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+```
+
+Postgres must also accept connections from Docker, which by default it doesn't:
+
+- In `postgresql.conf`, set `listen_addresses` to include the Docker bridge address, or `'*'`.
+- In `pg_hba.conf`, allow the Docker subnet, for example `host  all  backup  172.16.0.0/12  scram-sha-256`.
+
+**On the same machine, Linux only:** add `network_mode: host` to the service and remove its `networks:` section. `PGHOST=localhost` then works without changing the Postgres config, but the container is no longer network-isolated from the host.
+
+**On another server:** set `PGHOST` to its hostname or IP.
 
 ### Postgres permissions
 
