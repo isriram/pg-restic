@@ -1,5 +1,13 @@
 # pg-restic
 
+[![Docker Hub](https://img.shields.io/docker/v/sriramiyer/pg-restic?sort=semver&label=docker%20hub&logo=docker)](https://hub.docker.com/r/sriramiyer/pg-restic)
+[![Docker pulls](https://img.shields.io/docker/pulls/sriramiyer/pg-restic?logo=docker)](https://hub.docker.com/r/sriramiyer/pg-restic)
+[![Image size](https://img.shields.io/docker/image-size/sriramiyer/pg-restic?sort=semver)](https://hub.docker.com/r/sriramiyer/pg-restic/tags)
+[![GitHub stars](https://img.shields.io/github/stars/isriram/pg-restic?logo=github)](https://github.com/isriram/pg-restic)
+[![License: MIT](https://img.shields.io/github/license/isriram/pg-restic)](https://github.com/isriram/pg-restic/blob/main/LICENSE)
+
+**Image:** [sriramiyer/pg-restic on Docker Hub](https://hub.docker.com/r/sriramiyer/pg-restic) · **Source and issues:** [isriram/pg-restic on GitHub](https://github.com/isriram/pg-restic)
+
 Back up Postgres to S3, B2 or any S3-compatible storage with restic. Encrypted, deduplicated snapshots in one Docker container.
 
 On a cron schedule, pg-restic streams `pg_dumpall` straight into a [restic](https://restic.net) repository (nothing is written to local disk), then applies your retention policy.
