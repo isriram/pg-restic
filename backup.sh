@@ -3,10 +3,10 @@ set -euo pipefail
 
 [ -f /etc/pg-restic.env ] && . /etc/pg-restic.env
 
-# Skip this run if the previous one is still going (slow dump or prune)
+# Skip this run if the previous one, or a prune, is still going
 exec 9> /var/run/pg-restic.lock
 if ! flock -n 9; then
-    echo "$(date -Iseconds) Previous backup still running, skipping this run."
+    echo "$(date -Iseconds) Previous backup or prune still running, skipping this run."
     exit 0
 fi
 
@@ -18,10 +18,11 @@ if ! restic backup --stdin-filename all-databases.sql --stdin-from-command -- \
     exit 1
 fi
 
+# Space is freed by prune.sh on PRUNE_SCHEDULE; forget only drops snapshot records
 echo 'Applying retention policy...'
-restic forget --prune \
+restic forget \
     --keep-hourly "${RESTIC_KEEP_HOURLY:-24}" \
     --keep-daily "${RESTIC_KEEP_DAILY:-31}" \
     --keep-monthly "${RESTIC_KEEP_MONTHLY:-12}"
 
-echo 'Backup and prune complete.'
+echo 'Backup complete.'

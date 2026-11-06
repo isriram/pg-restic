@@ -10,7 +10,7 @@
 
 Back up Postgres to S3, B2 or any S3-compatible storage with restic. Encrypted, deduplicated snapshots in one Docker container.
 
-On a cron schedule, pg-restic streams `pg_dumpall` straight into a [restic](https://restic.net) repository (nothing is written to local disk), then applies your retention policy.
+On a cron schedule, pg-restic streams `pg_dumpall` straight into a [restic](https://restic.net) repository (nothing is written to local disk), then applies your retention policy. Once a day it prunes data no snapshot needs any more.
 
 - **Encrypted and deduplicated:** restic encrypts everything client-side, and hourly dumps of a mostly unchanged database take up very little extra space.
 - **No broken snapshots:** if `pg_dumpall` fails, no snapshot is saved.
@@ -77,22 +77,23 @@ docker logs -f pg-restic
 
 ## Configuration
 
-| Variable                | Required | Default     | Description                                                                                                |
-| ----------------------- | -------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
-| `PGHOST`                | Yes      |             | Postgres host name (not `localhost`, see [Postgres outside Docker](#postgres-outside-docker))              |
-| `PGPORT`                | No       | `5432`      | Postgres port                                                                                              |
-| `PGUSER`                | Yes      |             | Postgres user (see [Postgres permissions](#postgres-permissions))                                          |
-| `PGPASSWORD`            | Yes      |             | Postgres password                                                                                          |
-| `RESTIC_REPOSITORY`     | Yes      |             | Restic repository, e.g. `s3:s3.amazonaws.com/bucket`                                                       |
-| `RESTIC_PASSWORD`       | Yes      |             | Repository encryption password                                                                             |
-| `AWS_ACCESS_KEY_ID`     | For S3   |             | S3 access key (on B2: the application key ID)                                                              |
-| `AWS_SECRET_ACCESS_KEY` | For S3   |             | S3 secret key (on B2: the application key)                                                                 |
-| `CRON_SCHEDULE`         | No       | `0 * * * *` | When to back up, in [cron format](https://crontab.guru)                                                    |
-| `RESTIC_KEEP_HOURLY`    | No       | `24`        | Hourly snapshots to keep                                                                                   |
-| `RESTIC_KEEP_DAILY`     | No       | `31`        | Daily snapshots to keep                                                                                    |
-| `RESTIC_KEEP_MONTHLY`   | No       | `12`        | Monthly snapshots to keep                                                                                  |
-| `RESTIC_HOST`           | No       | `pg-restic` | Host name recorded on snapshots. Keep it fixed so retention keeps working when the container is recreated. |
-| `TZ`                    | No       | `UTC`       | Time zone for `CRON_SCHEDULE`, e.g. `America/Toronto`                                                      |
+| Variable                | Required | Default      | Description                                                                                                |
+| ----------------------- | -------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
+| `PGHOST`                | Yes      |              | Postgres host name (not `localhost`, see [Postgres outside Docker](#postgres-outside-docker))              |
+| `PGPORT`                | No       | `5432`       | Postgres port                                                                                              |
+| `PGUSER`                | Yes      |              | Postgres user (see [Postgres permissions](#postgres-permissions))                                          |
+| `PGPASSWORD`            | Yes      |              | Postgres password                                                                                          |
+| `RESTIC_REPOSITORY`     | Yes      |              | Restic repository, e.g. `s3:s3.amazonaws.com/bucket`                                                       |
+| `RESTIC_PASSWORD`       | Yes      |              | Repository encryption password                                                                             |
+| `AWS_ACCESS_KEY_ID`     | For S3   |              | S3 access key (on B2: the application key ID)                                                              |
+| `AWS_SECRET_ACCESS_KEY` | For S3   |              | S3 secret key (on B2: the application key)                                                                 |
+| `CRON_SCHEDULE`         | No       | `0 * * * *`  | When to back up, in [cron format](https://crontab.guru)                                                    |
+| `RESTIC_KEEP_HOURLY`    | No       | `24`         | Hourly snapshots to keep                                                                                   |
+| `RESTIC_KEEP_DAILY`     | No       | `31`         | Daily snapshots to keep                                                                                    |
+| `RESTIC_KEEP_MONTHLY`   | No       | `12`         | Monthly snapshots to keep                                                                                  |
+| `PRUNE_SCHEDULE`        | No       | `30 3 * * *` | When to free space from forgotten snapshots, in cron format                                                |
+| `RESTIC_HOST`           | No       | `pg-restic`  | Host name recorded on snapshots. Keep it fixed so retention keeps working when the container is recreated. |
+| `TZ`                    | No       | `UTC`        | Time zone for `CRON_SCHEDULE` and `PRUNE_SCHEDULE`, e.g. `America/Toronto`                                 |
 
 Any other [restic environment variable](https://restic.readthedocs.io/en/stable/040_backup.html#environment-variables) is passed through too.
 

@@ -8,6 +8,6 @@ FROM alpine:3.24
 RUN apk add --no-cache postgresql18-client tzdata
 
 COPY --from=restic /usr/bin/restic /usr/bin/restic
-COPY --chmod=755 backup.sh entrypoint.sh /usr/local/bin/
+COPY --chmod=755 backup.sh prune.sh entrypoint.sh /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
