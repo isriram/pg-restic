@@ -154,6 +154,10 @@ Backup output goes to `docker logs pg-restic`. A failed run logs `Database dump 
 
 To be alerted when backups stop, use a heartbeat monitor such as [healthchecks.io](https://healthchecks.io) or an [Uptime Kuma](https://github.com/louislam/uptime-kuma) push monitor. Create a check that expects a ping as often as `CRON_SCHEDULE` runs, and set its URL as `PING_URL`. pg-restic visits it after every successful backup, so a failed backup, a stopped container or a powered-off host all show up as a missed ping. Do the same with `PRUNE_PING_URL` and a daily check to hear about failed prunes. If the monitor can't be reached, pg-restic logs a warning and the backup still counts as successful.
 
+### Upgrading from 0.0.x
+
+Snapshots are now saved as `all-databases.sql` instead of `production.sql`, and prune runs daily instead of after every backup. See the [changelog](https://github.com/isriram/pg-restic/blob/main/CHANGELOG.md) for how to restore and clean up older snapshots.
+
 ### Overlapping runs
 
 If a backup is still running when the next one is due, the new run is skipped.
