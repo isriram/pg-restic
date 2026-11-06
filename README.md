@@ -174,6 +174,10 @@ Multi-architecture build:
 docker buildx build --platform linux/amd64,linux/arm64 -t youruser/pg-restic:0.0.1 --push .
 ```
 
+## Contributing
+
+Found a bug or have an idea? [Open an issue](https://github.com/isriram/pg-restic/issues). Pull requests are welcome too: for anything larger than a small fix, open an issue first so we can agree on the approach.
+
 ## License
 
 MIT. See [LICENSE](https://github.com/isriram/pg-restic/blob/main/LICENSE).
