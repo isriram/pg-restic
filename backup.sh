@@ -26,3 +26,7 @@ restic forget \
     --keep-monthly "${RESTIC_KEEP_MONTHLY:-12}"
 
 echo 'Backup complete.'
+
+if [ -n "${PING_URL:-}" ] && ! wget -q -T 10 -O /dev/null "$PING_URL"; then
+    echo 'Warning: could not reach PING_URL.' >&2
+fi

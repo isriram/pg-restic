@@ -92,6 +92,8 @@ docker logs -f pg-restic
 | `RESTIC_KEEP_DAILY`     | No       | `31`         | Daily snapshots to keep                                                                                    |
 | `RESTIC_KEEP_MONTHLY`   | No       | `12`         | Monthly snapshots to keep                                                                                  |
 | `PRUNE_SCHEDULE`        | No       | `30 3 * * *` | When to free space from forgotten snapshots, in cron format                                                |
+| `PING_URL`              | No       |              | URL visited after each successful backup (see [Logs and failures](#logs-and-failures))                     |
+| `PRUNE_PING_URL`        | No       |              | URL visited after each successful prune                                                                    |
 | `RESTIC_HOST`           | No       | `pg-restic`  | Host name recorded on snapshots. Keep it fixed so retention keeps working when the container is recreated. |
 | `TZ`                    | No       | `UTC`        | Time zone for `CRON_SCHEDULE` and `PRUNE_SCHEDULE`, e.g. `America/Toronto`                                 |
 
@@ -148,7 +150,9 @@ The image ships `pg_dumpall` 18 and restic 0.19. `pg_dumpall` 18 can back up Pos
 
 ### Logs and failures
 
-Backup output goes to `docker logs pg-restic`. A failed run logs `Database dump failed!` and saves no snapshot. Nothing alerts you to failures, so watch the logs or add your own monitoring.
+Backup output goes to `docker logs pg-restic`. A failed run logs `Database dump failed!` and saves no snapshot.
+
+To be alerted when backups stop, use a heartbeat monitor such as [healthchecks.io](https://healthchecks.io) or an [Uptime Kuma](https://github.com/louislam/uptime-kuma) push monitor. Create a check that expects a ping as often as `CRON_SCHEDULE` runs, and set its URL as `PING_URL`. pg-restic visits it after every successful backup, so a failed backup, a stopped container or a powered-off host all show up as a missed ping. Do the same with `PRUNE_PING_URL` and a daily check to hear about failed prunes. If the monitor can't be reached, pg-restic logs a warning and the backup still counts as successful.
 
 ### Overlapping runs
 

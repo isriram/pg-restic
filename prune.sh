@@ -11,3 +11,7 @@ echo "$(date -Iseconds) Pruning unreferenced data from ${RESTIC_REPOSITORY}..."
 restic prune
 
 echo 'Prune complete.'
+
+if [ -n "${PRUNE_PING_URL:-}" ] && ! wget -q -T 10 -O /dev/null "$PRUNE_PING_URL"; then
+    echo 'Warning: could not reach PRUNE_PING_URL.' >&2
+fi
