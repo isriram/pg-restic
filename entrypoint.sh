@@ -17,10 +17,16 @@ echo "$(pg_dumpall --version), $(restic version)"
 export -p > /etc/pg-restic.env
 chmod 600 /etc/pg-restic.env
 
-# Create the repository on first run
-if ! restic cat config > /dev/null 2>&1; then
+# Create the repository on first run. restic exits 10 only when the repository doesn't exist;
+# any other failure (wrong password, bad credentials, network) must not lead to an init attempt.
+config_status=0
+config_error=$(restic cat config 2>&1 > /dev/null) || config_status=$?
+if [ "$config_status" -eq 10 ]; then
     echo 'Initializing restic repository...'
     restic init
+elif [ "$config_status" -ne 0 ]; then
+    echo "Cannot open the restic repository: ${config_error}" >&2
+    exit 1
 fi
 
 # Nothing from this container is running yet, so clear stale locks left by a killed previous run
