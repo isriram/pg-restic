@@ -105,10 +105,10 @@ Run these on any machine with restic installed, using the same `RESTIC_REPOSITOR
 restic snapshots
 
 # Save the latest dump to a file
-restic dump latest production.sql > production.sql
+restic dump latest all-databases.sql > all-databases.sql
 
 # Or restore straight into a Postgres server (requires a superuser)
-restic dump latest production.sql | psql -h target-host -U postgres -d postgres
+restic dump latest all-databases.sql | psql -h target-host -U postgres -d postgres
 ```
 
 The dump is made with `pg_dumpall --clean`, so it drops and recreates databases and roles on the target. Restore into an empty or scratch server first if you're unsure.

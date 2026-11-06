@@ -12,7 +12,7 @@ fi
 
 echo "$(date -Iseconds) Streaming database dump to ${RESTIC_REPOSITORY}..."
 # --stdin-from-command fails the backup (and creates no snapshot) if pg_dumpall exits non-zero
-if ! restic backup --stdin-filename production.sql --stdin-from-command -- \
+if ! restic backup --stdin-filename all-databases.sql --stdin-from-command -- \
         pg_dumpall -h "$PGHOST" -U "$PGUSER" --clean; then
     echo 'Database dump failed!' >&2
     exit 1
