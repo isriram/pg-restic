@@ -7,8 +7,8 @@ set -euo pipefail
 : "${RESTIC_REPOSITORY:?RESTIC_REPOSITORY is required}"
 : "${RESTIC_PASSWORD:?RESTIC_PASSWORD is required}"
 : "${CRON_SCHEDULE:=0 * * * *}"
-# Container hostnames change on every recreate; a fixed host keeps restic's stale-lock detection
-# and per-host retention grouping consistent
+# Container hostnames change on every recreate; a fixed host keeps restic's per-host
+# retention grouping consistent. (Lock files record the container hostname, not this.)
 export RESTIC_HOST="${RESTIC_HOST:-pg-restic}"
 
 echo "$(pg_dumpall --version), $(restic version)"
@@ -29,7 +29,7 @@ elif [ "$config_status" -ne 0 ]; then
     exit 1
 fi
 
-# Nothing from this container is running yet, so clear stale locks left by a killed previous run
+# Clears locks older than 30 minutes, or left by a dead process in this same container
 restic unlock
 
 # "backup-now" runs a single backup and exits, e.g. `docker compose run --rm pg-restic backup-now`
