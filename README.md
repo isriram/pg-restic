@@ -55,7 +55,7 @@ RESTIC_KEEP_MONTHLY=12
 ```yaml
 services:
   pg-restic:
-    image: sriramiyer/pg-restic:latest (or any version tag)
+    image: sriramiyer/pg-restic:latest  # or pin a version tag
     container_name: pg-restic
     restart: unless-stopped
     env_file: .env
