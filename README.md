@@ -168,11 +168,17 @@ If a backup is still running when the next one is due, the new run is skipped.
 docker build -t pg-restic .
 ```
 
-Multi-architecture build:
+Releasing (run `docker login` first, and update `CHANGELOG.md`):
 
 ```sh
-docker buildx build --platform linux/amd64,linux/arm64 -t youruser/pg-restic:0.0.1 --push .
+scripts/release.sh                # patch: 0.1.1 -> 0.1.2
+scripts/release.sh --bump minor   # 0.1.1 -> 0.2.0
+scripts/release.sh --bump 1.0.0   # an exact version
 ```
+
+In PowerShell, use `scripts\release.ps1`, `-Bump minor` or `-Bump 1.0.0`.
+
+The script works out the next version from the latest `vX.Y.Z` git tag and asks before publishing. It checks that `main` is clean and pushed, builds for amd64 and arm64, pushes the `X.Y.Z` and `latest` tags to Docker Hub, and creates the `vX.Y.Z` git tag.
 
 ## Contributing
 
