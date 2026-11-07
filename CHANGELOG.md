@@ -2,7 +2,7 @@
 
 All notable changes to this image are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Updates to the bundled Postgres client are minor releases.
 
-## [Unreleased]
+## [0.1.2] - 2026-11-06
 
 ### Changed
 
