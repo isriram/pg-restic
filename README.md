@@ -21,7 +21,7 @@ On a cron schedule, pg-restic streams `pg_dumpall` straight into a [restic](http
 
 I needed Postgres backups at work and at home at the same time. I tried a few existing images, but after spending time setting them up, I found they shipped an older `pg_dump` that couldn't back up newer Postgres versions. So I built pg-restic.
 
-I now run it in production at my workplace, as well as at home, so I'll keep it up to date. If it's useful to you too, a ⭐ on [GitHub](https://github.com/isriram/pg-restic) would genuinely make my day. It's how I know someone else out there is relying on it.
+I now run it in production at my workplace, as well as at home, so I'll keep it up to date. If it's useful to you too, a ⭐ would genuinely make my day. It's how I know someone else out there is relying on it.
 
 ## Quick start
 
