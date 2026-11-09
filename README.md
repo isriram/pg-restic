@@ -89,7 +89,7 @@ docker logs -f pg-restic
 | `PGPORT`                | No       | `5432`       | Postgres port                                                                                              |
 | `PGUSER`                | Yes      |              | Postgres user (see [Postgres permissions](#postgres-permissions))                                          |
 | `PGPASSWORD`            | Yes      |              | Postgres password                                                                                          |
-| `RESTIC_REPOSITORY`     | Yes      |              | Restic repository, e.g. `s3:s3.amazonaws.com/bucket`                                                       |
+| `RESTIC_REPOSITORY`     | Yes      |              | Restic repository, e.g. `s3:s3.amazonaws.com/bucket` or `rest:http://host:8000/repo`                       |
 | `RESTIC_PASSWORD`       | Yes      |              | Repository encryption password                                                                             |
 | `AWS_ACCESS_KEY_ID`     | For S3   |              | S3 access key (on B2: the application key ID)                                                              |
 | `AWS_SECRET_ACCESS_KEY` | For S3   |              | S3 secret key (on B2: the application key)                                                                 |
@@ -104,6 +104,8 @@ docker logs -f pg-restic
 | `TZ`                    | No       | `UTC`        | Time zone for `CRON_SCHEDULE` and `PRUNE_SCHEDULE`, e.g. `America/Toronto`                                 |
 
 Any other [restic environment variable](https://restic.readthedocs.io/en/stable/040_backup.html#environment-variables) is passed through too.
+
+For [restic's REST server](https://github.com/restic/rest-server), pass its credentials in `RESTIC_REST_USERNAME` and `RESTIC_REST_PASSWORD` and leave out the AWS variables. Don't run the server with `--append-only`: backups still succeed, but retention is refused, so every run reports a failure and old snapshots are never removed.
 
 ## Restoring
 
