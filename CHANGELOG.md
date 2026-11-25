@@ -2,6 +2,16 @@
 
 All notable changes to this image are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Updates to the bundled Postgres client are minor releases.
 
+## [0.1.3] - 2026-11-24
+
+### Fixed
+
+- Dumps now drop databases and roles with `IF EXISTS` (`pg_dumpall --if-exists`), so restoring into a fresh server no longer fails on ones that don't exist yet. Dumps from earlier versions still use plain `DROP`: restore them with `psql` without `ON_ERROR_STOP` (not as a Postgres image init script), or add `IF EXISTS` to those lines first.
+
+### Changed
+
+- The bundled Postgres client is now 18.7.
+
 ## [0.1.2] - 2026-11-06
 
 ### Changed
